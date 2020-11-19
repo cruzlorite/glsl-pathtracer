@@ -8,7 +8,7 @@ Screenshot 1                    | Screenshot 2                   | Screenshot 3
 
 ## Thrid party code
 
-You can find it on **include** and **third-party**.
+You can find it on **include** and **third-party** folders.
 
  - [glad](https://github.com/Dav1dde/glad)
  - [glfw](https://www.glfw.org/)
@@ -46,7 +46,7 @@ $ cd path-to-project
 $ mkdir build
 $ cd build
 $ cmake ..
-$ msbuild phviewer.sln
+$ msbuild pathtracer.sln
 ```
 
 ## Running
