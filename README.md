@@ -1,6 +1,6 @@
 # GLSL Pathtracer
 
-Pathtracer based on [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) by [Peter Shirley](https://github.com/petershirley). Original is implemented using just C++, this uses OpenGL ComputerShader to reach better performance.
+Pathtracer based on [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) by [Peter Shirley](https://github.com/petershirley). This one uses OpenGL ComputerShaders to reach better performance.
 
 Screenshot 1                    | Screenshot 2                   | Screenshot 3 
 :------------------------------:|:------------------------------:|:-------------------------:
