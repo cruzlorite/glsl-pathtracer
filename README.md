@@ -4,7 +4,7 @@ Pathtracer based on [Ray Tracing in One Weekend](https://raytracing.github.io/bo
 
 Screenshot 1                    | Screenshot 2                   | Screenshot 3 
 :------------------------------:|:------------------------------:|:-------------------------:
-![](screenshots/screenshot1.png)|![](screenshots/screenshot2.png)|![](screenshots/screenshot2.png) 
+![](screenshots/screenshot1.png)|![](screenshots/screenshot2.png)|![](screenshots/screenshot3.png) 
 
 ## Thrid party code
 
