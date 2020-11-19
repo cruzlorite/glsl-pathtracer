@@ -1,0 +1,116 @@
+// Phisicaly based rendering using path tracing
+#version 450
+
+// Set execution layout
+layout (local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+// FrameBuffer where to render the scene
+layout(binding = 0, rgba32f) uniform image2D framebuffer;
+
+precision highp float;
+
+// Includes
+#include "Constants.glsl"
+#include "Random.glsl"
+#include "Sphere.glsl"
+#include "HitInfo.glsl"
+#include "Material.glsl" 
+#include "Scatter.glsl"
+
+// The camera specification
+uniform vec3 eye;
+uniform vec3 ray00;
+uniform vec3 ray10;
+uniform vec3 ray01;
+uniform vec3 ray11;
+
+// Path tracing configuration
+uniform uint numSamples;
+uniform uint maxBounces;
+uniform vec3 clearColor;
+
+// SPHERE LIST
+#define NUM_SPHERES 7
+const Sphere spheres[] = {
+    Sphere(0, 1.0f, vec3(0.0f, 1.0f, 0.0f)),
+    Sphere(1, 30.0f, vec3(0.0f, -30f, 0.0f)), //1
+    Sphere(2, 1.0f, vec3(2.98f, 0.86f, 0.0f)),
+    Sphere(3, 1.0f, vec3(-2.98f, 0.86f, 0.0f)),
+    Sphere(4, 1.0f, vec3(0.0f, 0.86f, -2.98f)),
+    Sphere(5, 1.0f, vec3(0.0f, 0.86f, 2.98f)),
+    Sphere(7, 2.0f, vec3(0.0f, 5.0f, 0.0f)),
+};
+
+bool hit_all_spheres(in Ray ray, inout HitInfo hit) {
+    bool somethingHit = false;
+    float closest = RAY_T_MAX;
+    HitInfo tmp;
+
+    for (int i = 0; i < NUM_SPHERES; ++i) {
+        if (hit_sphere(spheres[i], ray, RAY_T_MIN, closest, tmp)) {
+            somethingHit = true;
+            closest = tmp.ray_t;
+            hit = tmp;
+        }
+    }
+
+    return somethingHit;
+}
+
+vec3 sky_color(in Ray ray) {
+    vec3 unit_direction = normalize(ray.dir);
+    float t = 0.5 * (unit_direction.y + 1.0);
+    return mix(vec3(1.0f), vec3(0.3f, 0.5f, 0.7f), t);
+}
+
+// Pathtrace a ray
+vec3 trace_path(in Ray ray, uint depth) {
+    vec3 throughput = vec3(1.0f);
+    HitInfo hit;
+
+    // In GPU there is no recursitivy!
+    for (uint i = 0; i < depth; ++i) {
+        vec3 att;
+        Ray ray_out; // New scattered ray
+
+        if (hit_all_spheres(ray, hit)) {
+            Material mat = get_material_by_id(hit.mat_id);
+
+            if (scatter(ray, hit, att, ray_out)) {
+                ray = ray_out;
+                throughput *= att;
+            }
+            else break;
+        } else
+            return throughput * sky_color(ray);
+    }
+
+    return BLACK;
+}
+
+
+void main(void) {    
+    // Get this thread pixel
+    ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
+
+    // Initialize rundom numbers
+    randf_seed(numSamples);
+
+    // Get viewport size
+    ivec2 size = imageSize(framebuffer);
+
+    // Is this pixel out of range?
+    if (pixel.x >= size.x || pixel.y >= size.y) return;
+
+    // Interpolate to get this pixel ray
+    vec2 pos = vec2(pixel) / vec2(size);
+    vec3 dir = mix(mix(ray00, ray01, pos.y), mix(ray10, ray11, pos.y), pos.x);
+
+    // Ray born in the eye towards the pixel
+    Ray ray = Ray(eye, normalize(dir));
+    vec3 color = trace_path(ray, maxBounces);
+
+    // Read previous value
+    vec3 prev = imageLoad(framebuffer, pixel).xyz;
+    imageStore(framebuffer, pixel, vec4(color + prev, 1.0f));
+}
