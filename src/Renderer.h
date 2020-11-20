@@ -1,22 +1,22 @@
 //    Copyright(C) 2019, 2020 José María Cruz Lorite
 //
-//    This file is part of pathtracer.
+//    This file is part of Pathtracer.
 //
-//    pathtracer is free software: you can redistribute it and/or modify
+//    Pathtracer is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //
-//    pathtracer is distributed in the hope that it will be useful,
+//    Pathtracer is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with pathtracer.  If not, see <https://www.gnu.org/licenses/>.
+//    along with Pathtracer.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef RENDERER_H_
-#define RENDERER_H_
+#ifndef PATHTRACER_RENDERER_H_
+#define PATHTRACER_RENDERER_H_
 
 #include <glad/glad.h>
 
@@ -64,6 +64,7 @@ public:
 
     /** Export render image to file */
     virtual void readFrameBuffer(uint8_t* image, size_t w, size_t h) const = 0;
+       
 };
 
-#endif  //PATH_TRACER_PATHTRACER_H_
+#endif  //PATHTRACER_RENDERER_H_
